@@ -6,6 +6,8 @@ import { MoreHorizontal, ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
+import { UpdateProductModal } from "@/components/widget/product-update-modal";
+import { DeleteProductModal } from "@/components/widget/product-delete-modal";
 
 export type Product = {
   id: string;
@@ -16,7 +18,7 @@ export type Product = {
   isActive: boolean;
 }
 
-export const columns: ColumnDef<Product>[] = [
+export const createColumns = (onSuccess: () => void): ColumnDef<Product>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -129,9 +131,13 @@ export const columns: ColumnDef<Product>[] = [
               Copy Product ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View Product</DropdownMenuItem>
+            {/* Update Product */}
+            <UpdateProductModal onSuccess={onSuccess} product={product} />
+
             <DropdownMenuItem>Deactivate Product</DropdownMenuItem>
-            <DropdownMenuItem>Delete Product</DropdownMenuItem>
+
+            {/* Delete Product */}
+            <DeleteProductModal onSuccess={onSuccess} productId={product.id} />
           </DropdownMenuContent>
         </DropdownMenu>
       )

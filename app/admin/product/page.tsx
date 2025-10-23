@@ -3,7 +3,7 @@
 import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
 
-import { columns, Product } from "./columns";
+import { createColumns, Product } from "./columns";
 import { DataTable } from "./data-table";
 
 import { CreateProductModal } from "@/components/widget/product-create-modal"; 
@@ -17,7 +17,7 @@ export default function ProductAdminPage() {
     <section>
       <div className="container mx-auto py-10">
         <CreateProductModal onSuccess={mutate} />
-        <DataTable columns={columns} data={data} />
+        <DataTable columns={createColumns(mutate)} data={data} />
       </div>
     </section>
   )

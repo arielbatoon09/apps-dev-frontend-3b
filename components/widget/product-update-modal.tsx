@@ -10,7 +10,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
-import { Loader2 } from "lucide-react";
+import { Loader2, Pencil } from "lucide-react";
+import { Product } from "@/app/admin/product/columns";
+
+interface UpdateProductModalProps {
+  product: Product;
+  onSuccess: () => void;
+}
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Product name must be at least 2 characters." }),
@@ -19,24 +25,27 @@ const formSchema = z.object({
   stock: z.number().min(1, { message: "Stock must be a valid number." }),
 });
 
-export function CreateProductModal({ onSuccess }: { onSuccess: () => void }) {
+export function UpdateProductModal({ product, onSuccess }: UpdateProductModalProps) {
   const [loading, setLoading] = useState(false);
   const [isOpenDialog, setOpenDialog] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      description: "",
-      price: 1,
-      stock: 1,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      stock: product.stock,
     },
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       setLoading(true);
-      const response = await api.post("/api/v1/product-create", values);
+      const response = await api.post("/api/v1/product-update", {
+        id: product.id,
+        ...values
+      });
       console.log(response)
 
       // Revalidate SWR Cache
@@ -59,13 +68,17 @@ export function CreateProductModal({ onSuccess }: { onSuccess: () => void }) {
   return (
     <Dialog open={isOpenDialog} onOpenChange={setOpenDialog}>
       <DialogTrigger asChild>
-        <Button>Add New Product</Button>
+        <Button variant="outline" size="sm" className="w-full">
+          <Pencil className="mr-2 h-4 w-4" />
+          Update Product
+        </Button>
       </DialogTrigger>
+      
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add New Product</DialogTitle>
+          <DialogTitle>Update Product</DialogTitle>
           <DialogDescription>
-            Fill in the details below to create a new product.
+            Modify the fields below and save to update this product.
           </DialogDescription>
         </DialogHeader>
 
